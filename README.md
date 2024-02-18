@@ -1,151 +1,59 @@
 # ActivitePratique1
 # Principe de l’Inversion de Contrôle et Injection des dépendances
 
-Dans cette partie on va initier l'inversion de contrôle et l'injection des dépendances, par la séparation des codes métier aux codes techniques, ainsi on va faire l'injection des dépandances par le couplage faible et par la dépendances des classes avec des interfaces.
+Dans cette étape, nous allons mettre en place l'inversion de contrôle (IoC) et l'injection de dépendances (DI) en séparant les aspects métier des aspects techniques du code. Cela implique d'effectuer l'injection de dépendances en favorisant un couplage faible et en reliant les classes aux interfaces plutôt qu'aux implémentations directes.
 
 ## Architecture d'application 
 ![image](https://user-images.githubusercontent.com/48890714/230694406-2793f4a6-fe1d-458f-b922-4b6b8b41fadb.png)
 
-## Notion de cours 
+## Architerctures d'application
 
-Il existe deux type d'architectures des applications : 
+Il existe deux types d'architectures d'applications :
 
-- ```Monotolithique``` : c'est à dire une seule architecture de l'application et meme technologie, l'application est développée dans un seul bloc autre mot à dire c'est un modèle traditionnel de programme de développement, conçu comme une unité unifiée autonome et indépendante d'autres apps et déployée dans un serveur d'application. Développer une seule application qui centralise toutes les fonctionnalités d'un grand probléme donnée.
- 
-   Quelques avantages d'une architecture monolithique:
-    - Déploiement facile.
-    - Développement : seul base de code  à dévlopper.
-    - Performances. 
-    - Tests simplifiés.
-    - Débogage facile.
- 
-   Inconvénients d'une architecture monolithique :
-    - Elles centralisent tous les besoins fonctionnels.
-    - Elles sont réalisées dans une seule technologie.
-    - Chaque modification nécessite de tester les régressions (tester si les autres fonctionnalités ne sont pas  impactées négativement car chaque module dépend de l'autre), redéployer toute l'application, difficile à faire évoluer au niveau fonctionnel.
-    - Le client attend beaucoup de temps pour commencer à voifr les premières versions.
-    - Mise en production prend beaucoup de temps.
-    - Difficile à Tester.
-    - Performances ( Scalabilité, lorsque il ya probléme de monté en charge solution Scalabilité Horizontale mais c'est trop ).
-    - Vitesse de développement plus lente.
-    - Évolutivité.
-    - Fiabilité.
-    - Obstacle à l'adoption de la technologie.
-    - Manque de flexibilité.
-    - Déploiement.
-    
-- ```Micro-Services```: est une méthode architecturale qui repose sur une série de services déployables indépendamment. Ces services ont leur propre logique métier et leur propre base de données avec un objectif précis. La mise à jour, les tests, le déploiement et la mise à l'échelle ont lieu dans chaque service. chaque micro service est résponsable  d'une fonctionnalité et tourne dansun processus séparé. 
-  
-    Les avantages des microservices :
-    - Agilité.
-    - Évolutivité flexible.
-    - Déploiement continu.
-    - Facilité d'administration et de test.
-    - Déploiement indépendant.
-    - Flexibilité technologique.
-    - Fiabilité élevée.
-    - Équipes satisfaites.
-    - Choix de téchnologie.
-    - Livraison continue.
-    - Facilité des tests et du déploiement.
-    - S'apprete bien à au processus du génie logiciel. TDD ( Test Driven Développement ) et les métodes agiles.
-       ``` java 
-         // developpement classique 
-          public class Calcul()
-          {
-            public doubke somme(double a, double b)
-            {
-               return a+b;
-            }
-          }
-          
-          // Class de test
-          public class CalculTest()
-          {
-            @Test 
-            public void testSomme(){
-              double a=5;
-              double b=8;
-              double exp=a+b;
-              Calcul c= new Calcul();
-              double rest= c.somme(a,b);
-              assertEqual(exp,rest);
-            }
-          }
-       ```
-        ``` java 
-         // developpement  basé sur TDD
-          // Class de test
-          public class TestCalcul()
-          {
-            @Test 
-            public void testSomme(){
-              double a=5;
-              double b=8;
-              double exp=a+b;
-              Calcul c= new Calcul(); // va demande de crée la classe Calcul
-              double rest= c.somme(a,b); // va demande de crée la méthode  somme
-              assertEqual(exp,rest);
-            }
-          }
-          
-          public class Calcul()
-          {
-            public doubke somme(double a, double b)
-            {
-               return 0; // votre travaill est seulement de coder la fonction.
-            }
-          }
-       ```
+- **Architecture Monolithique** : Cette approche consiste à développer une seule application avec une seule technologie, regroupant toutes les fonctionnalités dans un seul bloc. C'est un modèle traditionnel de développement de logiciels, conçu comme une entité unifiée autonome et déployée sur un serveur d'application. Les avantages d'une telle architecture incluent un déploiement facile, un développement simplifié avec une seule base de code, de bonnes performances, des tests simplifiés et un débogage facile. Cependant, les inconvénients comprennent la centralisation de tous les besoins fonctionnels, la nécessité de tester les régressions à chaque modification, la lenteur des mises en production, des performances potentiellement limitées, une évolutivité difficile, une flexibilité réduite et des obstacles à l'adoption de nouvelles technologies.
 
-   Inconvénients des microservices :
-    - Développement tentaculaire : plus de complexité.
-    - Coûts d'infrastructure exponentiels.
-    - Frais organisationnels supplémentaires.
-    - Défis de débogage.
-    - Manque de standardisation.
-    - Manque de responsabilité claire 
-    
-    on besoin vers la fin de développer un ```Gate way``` qui permet de recevoir les requetes et équilibre la charge (loader balancer),  nous avons besoin aussi besoin de ```DiscoveryService``` stocke les services et apartir de nom permet de précisé qu'il service et envoyer leur adress a gate way,nous avons besoins ```Config Service``` dans le quelle on va crée un repository qui contient application.properties dans la quelle on va met toute les properties commun entre les services.
-
-![image](https://user-images.githubusercontent.com/48890714/230246863-4872eb6e-7dc3-4a30-a5d2-aea6e1be4d8d.png)
-
+- **Microservices** : Cette approche repose sur une architecture où les fonctionnalités sont décomposées en une série de services déployables indépendamment. Chaque service possède sa propre logique métier et sa propre base de données, avec un objectif spécifique. Les avantages des microservices incluent l'agilité, une évolutivité flexible, le déploiement continu, une administration et des tests facilités, le déploiement indépendant, une flexibilité technologique, une fiabilité accrue et une adaptation aux méthodes de développement telles que le TDD (Test Driven Development) et les méthodes agiles. Cependant, les inconvénients comprennent une complexité accrue, des coûts d'infrastructure plus élevés, des frais organisationnels supplémentaires, des défis de débogage, un manque de standardisation et une responsabilité moins claire.
     
     
 ## Exigences d'un projet informatique
 
-Chaque projet informatique à deux types des exigences :
- - ```Exigences Fonctionnelle``` sont les besoins fonctionnelles , les attentes du utilisateurs finale ou bien les beoins métiers de l'entreprise.
- - ```Exigences Techniques``` sont les besoins techniques quand peut résumer dans les points suivants :
-    - La performance : ce que concerne le temps de réponse de l'application, le problème de montée en charge, qu'est peut-être résolue par la scalabilité, cette dérnière peut prendre deux formes:
-        - Horizontale : se caractérise par l’équilibrage de charge et la tolérance aux pannes, cette scalabilité conciste sur le démarrage de l’application en  plusieurs instances dans différentes machines pour palier au problème de montée en charge, avec un serveur Load Balencer pour l’équilibrage de charge des requete reçu de chez les clients.
-        - Verticale : c'est la technique qui permet d'augmenter les resources de la machine ou est exécuté une application, par resources on entend par là, la RAM, le disque dure, le processeur/CPU etc. l'application va créer un thread pour chaque requete d'un client.
+Chaque projet informatique présente deux types d'exigences :
+
+- **Exigences Fonctionnelles** : Ce sont les besoins fonctionnels, les attentes des utilisateurs finaux ou les besoins métiers de l'entreprise.
+
+- **Exigences Techniques** : Ce sont les besoins techniques qui peuvent être résumés comme suit :
+
+    - **Performance** : Cette catégorie concerne le temps de réponse de l'application et le problème de montée en charge, qui peut être résolu par la scalabilité. La scalabilité peut prendre deux formes :
     
-      ![image](https://user-images.githubusercontent.com/48890714/230366076-441c472a-7ff6-40f6-9a5e-6a4e699fd221.png)
+    - **Scalabilité Horizontale** : Elle consiste à équilibrer la charge et à tolérer les pannes en démarrant plusieurs instances de l'application sur différentes machines pour répondre au problème de montée en charge. Un serveur de répartition de charge (Load Balancer) est utilisé pour équilibrer la charge des requêtes reçues des clients.
+        
+    - **Scalabilité Verticale** : Il s'agit de la technique qui consiste à augmenter les ressources de la machine où l'application est exécutée. Par ressources, on entend la RAM, le disque dur, le processeur/CPU, etc. L'application crée un thread pour chaque requête d'un client.
+        
+    - **Maintenance** : L'application doit être évolutive dans le temps, mais en respectant la règle selon laquelle "une application doit être fermée à la modification et ouverte à l’extension", car les modifications peuvent entraîner des problèmes de régression.
     
-    - La maintenance : l'application doit être évolutive dans lle temps, mais en prenant en compte la régle ```une application doit être fermée à la modification et ouverte à l’extension``` parce que les modifications peuvent générer les problèmes de régression.
-    - La sécurité : les failles de sécurité sont l'un de problème critique au développement informatque, il faut donner plus d'un attention à la persistance des données et la gestion des transactions.
-    - Les versions : web / mobile / desktop.
+    - **Sécurité** : Les failles de sécurité constituent l'un des problèmes critiques en développement informatique. Il est essentiel de prêter une attention particulière à la persistance des données et à la gestion des transactions.
+    
+    - **Versions** : Web / Mobile / Desktop.
 
-## Inversion de contrôle
-L'inversion de contrôle est un principe consite à séparer de tous ce qui métier à tous ce qui est technique. les développeurs s'occupe seulement la partie code  et le framework va occuper la partie technique. on basant sur l'architecture AOP(Aspect Oriented Programming).
+##Inversion de contrôle
+L'inversion de contrôle (IoC) est un principe fondamental qui consiste à séparer les aspects métier des aspects techniques. Les développeurs se concentrent uniquement sur la partie logique du code tandis que le framework prend en charge les aspects techniques. Ce concept s'appuie sur l'architecture de la programmation orientée aspect (AOP).
 
-```
-La programmation orientée aspect (AOP) complète la programmation orientée objet (POO) en offrant une autre façon de penser la structure du programme. L'unité clé de la modularité en POO est la classe, alors qu'en AOP l'unité de modularité est l' aspect . 
-Les aspects permettent la modularisation de préoccupations telles que la gestion des transactions qui couvrent plusieurs types et objets. (Ces préoccupations sont souvent qualifiées de préoccupations transversales dans la littérature AOP.)
-```
-## Injection des dépandances
+La programmation orientée aspect (AOP) vient en complément de la programmation orientée objet (POO) en proposant une approche différente de la structuration des programmes. Alors que la classe est l'unité clé de modularité en POO, en AOP, c'est l'aspect qui devient cette unité. Les aspects permettent de modulariser des préoccupations transversales telles que la gestion des transactions, qui peuvent s'appliquer à plusieurs types et objets.
 
-Injection des dépandances présent en deux types :
- - Couplage fort : Les classes dépendent des autres classes, il est difficile de faire des modification car chaque fois on va modifier au code source.
- - Couplage faible : Les classes dépendent des interfaces et pas des autres classe, ce couplage facilite l'attribution d'une modification.
- 
- ## Spring IOC
- Préférable de faire la laison des composants du programme on utilisant un framework ce pemert de changer les composants ou le comportement facilment.
- Spring IOC consite sur lire un  fichier XML qui déclare quelle sont les différnetes classes à instancier et d'assurer les dépendances entre les différentes instances, et pour faire une nouvelle implémentation dans l'application on déclare dans le fichier xml de spring.
- Il existe deux méthode :
- - ```XML``` :  Spring va lire le fichier xml de configuration spring puis il va s’occuper des injections des dépendances.
- - ```Annotation``` : ajouter des annotations aux classes pour déclarer au Spring qu’il doit les instancier au démarrage de l’application, ainsi qu’auprés des objets qu’on doit attribués des dépendances aux autres instances des classes qui sont déjà déclarées.
+##Injection des dépendances
+L'injection des dépendances se divise en deux types :
+
+```Couplage fort``` : Les classes dépendent directement d'autres classes, ce qui rend les modifications difficiles car chaque changement nécessite une modification du code source.
+```Couplage faible``` : Les classes dépendent des interfaces plutôt que des implémentations concrètes, facilitant ainsi l'adaptation à des modifications ultérieures.
+
+##Spring IoC
+
+Il est préférable de gérer la liaison des composants d'un programme à l'aide d'un framework, ce qui permet de modifier les composants ou leur comportement plus facilement. Spring IoC consiste à déclarer dans un fichier XML quelles sont les différentes classes à instancier et à établir les dépendances entre ces instances. Pour ajouter une nouvelle implémentation dans l'application, il suffit de la déclarer dans ce fichier XML.
+
+Il existe deux méthodes pour configurer Spring IoC :
+
+```XML``` : Spring lit le fichier de configuration XML et gère les injections de dépendances en conséquence.
+```Annotations``` : Les annotations sont ajoutées aux classes pour indiquer à Spring de les instancier au démarrage de l'application, ainsi que pour spécifier les dépendances entre les différentes instances de classes déjà déclarées.
 
 ## Architecture de probléme
 ## La couche DAO 
@@ -287,88 +195,3 @@ il contient les noms des différentes implémentatios déja déclarés qu'on va 
 ma.enset.ext.DaoImplVWeb
 ma.enset.ext.MetierImplVWeb
 ```
-
-## FrameWork Spring 
-### Les dépandances ```pom.xml```
-Dans «External librairies» on a téléchargé 3 jars :
-1. Spring core
-2. Spring context
-3. Spring beans
-Ces jars vont être utilisés par Spring.
-On utilisant Spring pour injecter les dépendances automatiquement dans le fichier ```pom.xml```: 
-``` xml
-<dependencies>
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-core</artifactId>
-            <version>5.3.20</version>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-context</artifactId>
-            <version>5.3.16</version>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-beans</artifactId>
-            <version>5.3.18</version>
-        </dependency>
-        <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
-            <version>4.13.2</version>
-            <scope>test</scope>
-        </dependency>
-    </dependencies>
-```
- 
- ### XML
- ``` java
- public class PresentationSpringXML {
-    public static void main(String[] args) {
-        ApplicationContext context = new ClassPathXmlApplicationContext("applicationContext.xml");
-        Imetier imetier =(Imetier) context.getBean("metier");
-        System.out.println(imetier.calcul());
-        IDao iDao = (IDao) context.getBean("dao");
-        System.out.println(iDao.getdate());
-    }
-}
-```
-La structure de fichier ```applicationContext.xml```
-Le fichier xml de configuration de spring, dans la balise « beans » on déclare les instances qu’on a besoin avec ‘id’ est le nom de chaque instance, et ‘class’ le nom de la classe, et pour injecter la dépendance il y a la balise « property » avec un ‘name’ nom de l’objet et ‘ref’ la référence vers quelle instance :
-``` xml
-<?xml version="1.0" encoding="UTF-8"?>
-<beans xmlns="http://www.springframework.org/schema/beans"
-       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
-    <bean id="dao" class="ma.enset.ext.DaoImplVWeb"></bean>
-    <bean id="metier" class="ma.enset.metier.MetierImpl">
-        <property name="dao" ref="dao"></property>
-        <!--constructor-arg ref="dao"></constructor-arg-->
-    </bean>
-</beans>
-```
-### Annotation
-``` java
-public class PresSpringAnnotation {
-    public static void main(String[] args) {
-        ApplicationContext context = new AnnotationConfigApplicationContext("ma.enset.dao","ma.enset.metier","ma.enset.ext");
-        Imetier imetier = (Imetier) context.getBean("metier");
-        System.out.println(imetier.calcul());
-        IDao iDao = (IDao) context.getBean("dao");
-        System.out.println(iDao.getdate());
-    }
-}
-```
-## Maven 
-Maven : est un outil n’est pas d’un framework, qui permit l’automatisation des processus de développement d’un projet java, il utilise un paradigme connu sous le nom de POM (Project Object Model).
-Principe : à chaque fois on ajoute une dépendance au fichier xml ```pom.xml```, il va  chercher dans le ```repository local``` s’il en trouve il va les utiliser, sinon il va se connecter à l’internet et il va télécharger les dépendances déclarées.
-### Les commandes de Maven
-- ```mvn compile``` ->  compile le code source du projet.
-- ```mvn test``` ->  parcourir le projet et à chaque fois il trouve un test unitaire il va l’exécuter, puis il montre qui sont les tests réussit et qui ne sont pas.
-- ```mvn package``` ->  exécute la commande ```mvn compile``` et ```mvn test``` puis archive le projet maven dans archive (.jar / .war).
-- ```mvn install``` ->  exécute la commande ```mvn compile``` et ```mvn test``` puis elle installe le projet dans le repository local pour l’utiliser au cas de besoin.
-- ```mvn deploy``` ->  déployer un projet vers un serveur.
-- ```mvn site``` ->  générer un site de documentation.
-
-Dans cette partie, nous avons étudier l'injection des dépendance et l'inversion de contrôle avec instation dynamique et statique, Sprig XML et annotation et finalement avec le framework Spring (XML et Annotation).
