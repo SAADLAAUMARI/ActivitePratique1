@@ -192,6 +192,6 @@ Ce fichier contient la configuration pour l'injection des dépendances dynamique
 il contient les noms des différentes implémentatios déja déclarés qu'on va l'utiliser pour l'injection des dépandances d'une façon dynamique sans passer par l'instanciation des objets en utilisant mot cle ```new```.
 
 ``` txt 
-ma.enset.ext.DaoImplVWeb
-ma.enset.ext.MetierImplVWeb
+ma.enset.ext.DaoImplVWS
+ma.enset.ext.MetierImplVWS
 ```
