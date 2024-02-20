@@ -181,7 +181,6 @@ public class MetierImplVWeb implements Imetier {
         System.out.println("Version web Service");
         return 203;
     }
-
     public void setDao(IDao dao) {
         this.dao = dao;
     }
