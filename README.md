@@ -68,15 +68,11 @@ public interface IDao {
 
 ``` java 
 public class DaoImpl implements IDao{
-
     @Override
-    public double getdate() {
-        /*
-         se connecter à la base de données pour récupérer la température
-         */
+    public double getData() {
         System.out.println("Version Base de données");
-        double date = Math.random() * 50;
-        return date;
+        double temp=Math.random()*40;
+        return temp;
     }
 }
 ```
@@ -132,30 +128,22 @@ public class Presentation {
 Si en veux réspecter la régle ```l’application doit être fermée à la modification et ouverte à l’extension```, avec la métode statique dans le cas d'une nouvelle extension nous obligons à modifer le code. par contre avec la méthode dynamiqye ne faisant seulement l'injection des dépendances sans changement de code. un simple modification au niveau de fichier ```config.txt```
 
 ``` java
-public class Presentation2 {
-    // les exception a connaitre FileNotFoundException,ClassNotFoundException,InstantiationException,IllegalAccessException,ClassCastException
+public class Pres2 {
+    public static void main(String[] args) throws FileNotFoundException, ClassNotFoundException, InstantiationException, IllegalAccessException, NoSuchMethodException, InvocationTargetException {
+        Scanner scanner= new Scanner(new File("config.txt"));
+        String daoClassName=scanner.nextLine();
+        Class cDao=Class.forName(daoClassName);
+        IDao dao=(IDao) cDao.newInstance();
+        System.out.println(dao.getData());
 
-    public static void main(String[] args) throws  Exception{
-         /*
-        Injection des dependances par instanciation dynamique => Fichier de configuration
-         */
-        Scanner scanner = new Scanner(new File("config.txt"));
-        String daoClasseName= scanner.nextLine();
-        Class cDao = Class.forName(daoClasseName);
-        cDao.newInstance(); // creation instance , apple constructeur par desfaut.
-        IDao iDao=(IDao) cDao.newInstance();
-        System.out.println("Résultat :" + iDao.getdate());
+        String metierClassName=scanner.nextLine();
+        Class cMetier=Class.forName(metierClassName);
+        IMetier metier=(IMetier) cMetier.newInstance();
 
-        String metierClasseName= scanner.nextLine();
-        Class cMetier = Class.forName(metierClasseName);
-        cMetier.newInstance(); // creation instance , apple constructeur par desfaut.
-        Imetier iMetier=(Imetier) cMetier.newInstance();
+        Method method= cMetier.getMethod("setDao", IDao.class);
+        method.invoke(metier,dao);
 
-        Method method = cMetier.getMethod("setDao", IDao.class);
-        method.invoke(iMetier,iDao); // la meme chose que metier.setDao(dao);
-
-        System.out.println("Résultat :" + iMetier.calcul());
-
+        System.out.println("Résultat=>"+metier.calcul());
     }
 }
 ```
@@ -164,23 +152,25 @@ public class Presentation2 {
 Ce dossier contient la partie d'extension de l'application.
 à la maintenace on a respecté la régle d'or ```l’application doit être fermée à la modification et ouverte à l’extension``` et on a ajouté un autre dossier pour déclarer des nouvelles implémentations de l'interface IDao.
 ``` java
-public class DaoImplVWeb implements IDao {
+public class DaoImplVWS implements IDao {
     @Override
-    public double getdate() {
-        System.out.println("Version web Service");
+    public double getData() {
+        System.out.println("Version web");
         return 90;
     }
 }
 ```
 une autre implémentation de l'interface IDao dans la partie d'extension :
 ``` java
-public class MetierImplVWeb implements Imetier {
-    IDao dao =null;
+public class MetierImpl implements IMetier {
+    private IDao dao;
     @Override
     public double calcul() {
-        System.out.println("Version web Service");
-        return 203;
+        double tmp=dao.getData();
+        double res=tmp*540/Math.cos(tmp*Math.PI);
+        return res;
     }
+
     public void setDao(IDao dao) {
         this.dao = dao;
     }
@@ -191,6 +181,6 @@ Ce fichier contient la configuration pour l'injection des dépendances dynamique
 il contient les noms des différentes implémentatios déja déclarés qu'on va l'utiliser pour l'injection des dépandances d'une façon dynamique sans passer par l'instanciation des objets en utilisant mot cle ```new```.
 
 ``` txt 
-ma.enset.ext.DaoImplVWS
-ma.enset.ext.MetierImplVWS
+dao.DaoImpl
+metier.MetierImpl
 ```
